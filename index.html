@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TAKING V6 - BOSS EDITION</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;user-select:none}
+body{background:#050510;display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden}
+#game{width:100%;max-width:420px;height:100vh;background:#0e0e1e;position:relative;box-shadow:0 0 30px #a855f7}
+canvas{width:100%;height:72vh;display:block;background:radial-gradient(circle at center,#1a1a3a 0%,#0a0a1a 100%)}
+#ui{padding:12px;background:#12122a;border-top:2px solid #a855f7;text-align:center}
+#top{display:flex;justify-content:space-between;font-weight:bold;color:#fff;font-size:14px;margin-bottom:8px}
+#score{color:#fbbf24} #level{color:#a855f7}
+h1{font-size:20px;letter-spacing:2px;color:#fff;text-shadow:0 0 10px #a855f7}
+h1 span{color:#a855f7}
+#btn{margin-top:10px;width:100%;background:linear-gradient(90deg,#a855f7,#7c3aed);color:#fff;border:0;padding:14px;border-radius:12px;font-size:18px;font-weight:900;letter-spacing:1px}
+#controls{display:flex;justify-content:space-between;margin-top:8px;gap:8px}
+.ctrl{flex:1;background:#1e1e3a;border:1px solid #333;padding:10px;border-radius:8px;color:#fff;font-size:12px}
+</style>
+</head>
+<body>
+<div id="game">
+<canvas id="c" width="400" height="620"></canvas>
+<div id="ui">
+<div id="top"><div id="score">SCORE: 0</div><div id="level">LEVEL: 1</div></div>
+<h1>TAKING <span>V6</span></h1>
+<button id="btn">START GAME</button>
+<div id="controls"><div class="ctrl">◀ ▶ MOVE</div><div class="ctrl">🔥 AUTO FIRE</div></div>
+</div>
+</div>
+<script>
+const C=document.getElementById('c'),X=C.getContext('2d'),S=document.getElementById('score'),L=document.getElementById('level'),B=document.getElementById('btn');
+let player={x:185,y:540,w:32,h:32}, enemies=[], bullets=[], particles=[], score=0, level=1, playing=false, keys={}, lastShot=0;
+B.onclick=start;
+function start(){playing=true;score=0;level=1;enemies=[];bullets=[];player.x=185;S.innerText='SCORE: 0';L.innerText='LEVEL: 1';B.innerText='🔥 FIRING...';loop();spawner()}
+function spawner(){if(!playing)return;let count= level>3?2:1;for(let i=0;i<count;i++)enemies.push({x:Math.random()*360,y:-40,w:30,h:30,s:1.5+level*0.3,hp:1});setTimeout(spawner,900-level*70)}
+function loop(){
+if(!playing)return;
+X.clearRect(0,0,400,620);
+// player move
+if(keys['ArrowLeft']||keys['a'])player.x-=6;
+if(keys['ArrowRight']||keys['d'])player.x+=6;
+if(keys['ArrowUp']||keys['w'])player.y-=5;
+if(keys['ArrowDown']||keys['s'])player.y+=5;
+player.x=Math.max(0,Math.min(368,player.x));player.y=Math.max(350,Math.min(580,player.y));
+// draw player
+X.shadowBlur=15;X.shadowColor='#a855f7';X.fillStyle='#a855f7';X.fillRect(player.x,player.y,player.w,player.h);X.shadowBlur=0;
+X.fillStyle='#fff';X.fillRect(player.x+10,player.y-6,12,10);
+// bullets
+if(Date.now()-lastShot>180){bullets.push({x:player.x+13,y:player.y,w:6,h:12});lastShot=Date.now()}
+bullets.forEach((b,i)=>{b.y-=8;X.fillStyle='#fbbf24';X.fillRect(b.x,b.y,b.w,b.h);if(b.y<0)bullets.splice(i,1)});
+// enemies
+enemies.forEach((e,i)=>{
+e.y+=e.s;X.fillStyle='#ef4444';X.shadowBlur=10;X.shadowColor='#ef4444';X.fillRect(e.x,e.y,e.w,e.h);X.shadowBlur=0;
+if(e.y>640)enemies.splice(i,1);
+// bullet hit
+bullets.forEach((b,bi)=>{
+if(b.x<e.x+e.w&&b.x+b.w>e.x&&b.y<e.y+e.h&&b.y+b.h>e.y){
+enemies.splice(i,1);bullets.splice(bi,1);score+=10;S.innerText='SCORE: '+score;
+if(score%100==0){level++;L.innerText='LEVEL: '+level}
+for(let k=0;k<6;k++)particles.push({x:e.x+15,y:e.y+15,vx:(Math.random()-0.5)*6,vy:(Math.random()-0.5)*6,life:20})
+}
+});
+// player hit
+if(player.x<e.x+e.w&&player.x+player.w>e.x&&player.y<e.y+e.h&&player.y+player.h>e.y){
+playing=false;B.innerText='💀 GAME OVER - RESTART';B.style.background='#ef4444';
+}
+});
+// particles
+particles.forEach((p,i)=>{p.x+=p.vx;p.y+=p.vy;p.life--;X.fillStyle='#fbbf24';X.fillRect(p.x,p.y,3,3);if(p.life<0)particles.splice(i,1)});
+requestAnimationFrame(loop);
+}
+window.addEventListener('keydown',e=>keys[e.key]=true);
+window.addEventListener('keyup',e=>keys[e.key]=false);
+// touch
+let touchX=0;
+C.addEventListener('touchmove',e=>{let t=e.touches[0];player.x=t.clientX - (window.innerWidth>420? (window.innerWidth-420)/2 :0) -16; e.preventDefault()},{passive:false});
+</script>
+</body>
+</html>
