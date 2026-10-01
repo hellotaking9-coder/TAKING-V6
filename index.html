@@ -1,62 +1,45 @@
-
 <!DOCTYPE html>
-<html lang="ta">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TAKING V6 - BOSS EDITION</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>TAKING V6</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#050510;display:flex;justify-content:center;align-items:center;min-height:100vh;overflow:hidden;font-family:'Segoe UI',sans-serif;user-select:none}
-#game{width:100%;max-width:420px;height:100vh;max-height:800px;background:radial-gradient(circle at center,#1a1a3a 0%,#050510 100%);position:relative;box-shadow:0 0 50px #a855f7}
-canvas{width:100%;height:72vh;display:block}
-#ui{padding:12px;background:#12122a;border-top:2px solid #a855f7;text-align:center}
-#top{display:flex;justify-content:space-between;font-weight:bold;color:#fff;font-size:14px;margin-bottom:8px}
-#score{color:#fbbf24} #level{color:#a855f7}
-h1{font-size:20px;letter-spacing:2px;color:#fff}
-h1 span{color:#a855f7}
-#btn{margin-top:10px;width:100%;background:linear-gradient(90deg,#a855f7,#7c3aed);color:#fff;border:0;padding:14px;border-radius:12px;font-size:16px;font-weight:bold}
-#controls{display:flex;justify-content:space-between;margin-top:8px;gap:8px}
-.ctrl{flex:1;background:#1e1e3a;border:1px solid #333;padding:10px;border-radius:8px;color:#fff;font-size:12px;text-align:center}
+body{margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden}
+#box{width:360px;height:640px;background:radial-gradient(#1a1a40,#000);border:3px solid #a855f7;box-shadow:0 0 30px #a855f7;position:relative}
+canvas{width:100%;height:100%;display:block}
+#score{position:absolute;top:10px;left:10px;color:#fbbf24;font:bold 16px sans-serif}
+#btn{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:#a855f7;color:#fff;border:0;padding:12px 30px;border-radius:20px;font:bold 16px sans-serif}
 </style>
 </head>
 <body>
-<div id="game">
-<canvas id="c" width="400" height="620"></canvas>
-<div id="ui">
-<div id="top"><div id="score">SCORE: 0</div><div id="level">LEVEL: 1</div></div>
-<h1>TAKING <span>V6</span></h1>
-<div id="btn">🔥 BOSS EDITION 🔥</div>
-<div id="controls"><div class="ctrl">◀️ MOVE</div><div class="ctrl">🔥 AUTO FIRE</div></div>
-</div>
+<div id="box">
+<div id="score">SCORE: 0</div>
+<canvas id="c" width="360" height="640"></canvas>
+<button id="btn">PLAY TAKING V6</button>
 </div>
 <script>
-const c=document.getElementById('c'),x=c.getContext('2d'),scoreE=document.getElementById('score'),levelE=document.getElementById('level'),btn=document.getElementById('btn');
-let S=0,H=20,W=30,enemies=[],bullets=[],particles=[],score=0,level=1,playing=false,keys={},lastShot=0;
-const player={x:185,y:550,w:30,h:30,s:5};
-function loop(){
-if(!playing)return; x.clearRect(0,0,400,620);
-if(keys['a']||keys['ArrowLeft'])player.x-=player.s;
-if(keys['d']||keys['ArrowRight'])player.x+=player.s;
-if(keys['w'])player.y-=5;
-if(keys['s'])player.y+=5;
-player.x=Math.max(0,Math.min(370,player.x)); player.y=Math.max(350,Math.min(580,player.y));
-x.shadowBlur=20; x.fillStyle='#a855f7'; x.fillRect(player.x,player.y,player.w,player.h); x.shadowBlur=0;
-x.fillRect(player.x+10,player.y-12,10,12);
-if(Date.now()-lastShot>100){bullets.push({x:player.x+13,y:player.y,h:6,w:4}); lastShot=Date.now();}
-for(let i=0;i<bullets.length;i++){let b=bullets[i]; b.y-=12; x.fillStyle='#fbbf24'; x.fillRect(b.x,b.y,b.w,b.h); if(b.y<0)bullets.splice(i,1);}
-for(let i=0;i<enemies.length;i++){let e=enemies[i]; e.y+=e.v; e.x+=e.vx; x.shadowBlur=10; x.shadowColor='#ef4444'; x.fillStyle='#ef4444'; x.fillRect(e.x,e.y,e.w,e.h); x.shadowBlur=0; x.fillStyle='#fff'; x.fillRect(e.x+5,e.y+5,5,5);
-if(e.y>620||(e.x<player.x+player.w&&e.x+e.w>player.x&&e.y<player.y+player.h&&e.y+e.h>player.y)){enemies.splice(i,1); if(e.y<=620){S-=10; scoreE.innerText='SCORE: '+score; if(S<=0){S=0; endGame();}}}}
-for(let i=0;i<bullets.length;i++){for(let j=0;j<enemies.length;j++){let b=bullets[i],e=enemies[j]; if(b&&e&&b.x<e.x+e.w&&b.x+b.w>e.x&&b.y<e.y+e.h&&b.y+b.h>e.y){bullets.splice(i,1); score+=10; S+=5; scoreE.innerText='SCORE: '+score; levelE.innerText='LEVEL: '+level; particles.push({x:e.x+e.w/2,y:e.y+e.h/2,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:20}); enemies.splice(j,1); break;}}}
-for(let i=0;i<particles.length;i++){let p=particles[i]; p.x+=p.vx; p.y+=p.vy; p.life--; x.fillStyle='#fbbf24'; x.fillRect(p.x,p.y,3,3); if(p.life<=0)particles.splice(i,1);}
-if(Math.random()<0.05)enemies.push({x:Math.random()*350,y:-40,w:30,h:30,v:1.5+level*0.2,vx:(Math.random()-0.5)*2});
+const c=document.getElementById('c'),ctx=c.getContext('2d'),btn=document.getElementById('btn'),scoreE=document.getElementById('score');
+let p={x:165,y:560,w:30,h:30},bullets=[],ens=[],score=0,run=false,last=0;
+function drawP(){ctx.fillStyle='#a855f7';ctx.shadowBlur=15;ctx.shadowColor='#a855f7';ctx.fillRect(p.x,p.y,p.w,p.h);ctx.fillRect(p.x+10,p.y-10,10,10);ctx.shadowBlur=0;}
+function loop(t){
+if(!run)return;
+ctx.clearRect(0,0,360,640);
+drawP();
+if(t-last>120){bullets.push({x:p.x+13,y:p.y});last=t;}
+bullets.forEach((b,i)=>{b.y-=8;ctx.fillStyle='#fbbf24';ctx.fillRect(b.x,b.y,4,10);if(b.y<0)bullets.splice(i,1)});
+if(Math.random()<0.04)ens.push({x:Math.random()*330,y:-30,w:30,h:30});
+ens.forEach((e,i)=>{
+e.y+=2;ctx.fillStyle='#ef4444';ctx.fillRect(e.x,e.y,e.w,e.h);
+if(e.y>640)ens.splice(i,1);
+bullets.forEach((b,j)=>{if(b&&e&&b.x<e.x+e.w&&b.x+4>e.x&&b.y<e.y+e.h&&b.y+10>e.y){ens.splice(i,1);bullets.splice(j,1);score+=10;scoreE.innerText='SCORE: '+score;}})
+if(e.x<p.x+p.w&&e.x+e.w>p.x&&e.y<p.y+p.h&&e.y+e.h>p.y){run=false;btn.style.display='block';btn.innerText='GAME OVER - REPLAY';}
+});
 requestAnimationFrame(loop);
 }
-function endGame(){playing=false; btn.innerText='💀 GAME OVER - RESTART'; btn.style.background='#ef4444';}
-btn.onclick=()=>{if(!playing){S=20; score=0; enemies=[]; bullets=[]; playing=true; btn.innerText='⚔️ PLAYING...'; btn.style.background='linear-gradient(90deg,#a855f7,#7c3aed)'; level=1; loop();}};
-window.addEventListener('keydown',e=>keys[e.key]=true);
-window.addEventListener('keyup',e=>keys[e.key]=false);
-c.addEventListener('touchmove',e=>{let t=e.touches[0]; let rect=c.getBoundingClientRect(); player.x=(t.clientX-rect.left)*(400/rect.width)-15; player.y=(t.clientY-rect.top)*(620/rect.height)-15;});
+btn.onclick=()=>{score=0;ens=[];bullets=[];p.x=165;run=true;btn.style.display='none';scoreE.innerText='SCORE: 0';loop();};
+let sx=0; c.addEventListener('touchstart',e=>sx=e.touches[0].clientX);
+c.addEventListener('touchmove',e=>{let dx=e.touches[0].clientX-sx; p.x+=dx; p.x=Math.max(0,Math.min(330,p.x)); sx=e.touches[0].clientX; e.preventDefault();},{passive:false});
 </script>
 </div>
 </body>
