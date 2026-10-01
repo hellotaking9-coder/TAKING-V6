@@ -1,46 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>TAKING V6</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAKING V6 TikTok</title>
 <style>
-body{margin:0;background:#000;display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden}
-#box{width:360px;height:640px;background:radial-gradient(#1a1a40,#000);border:3px solid #a855f7;box-shadow:0 0 30px #a855f7;position:relative}
-canvas{width:100%;height:100%;display:block}
-#score{position:absolute;top:10px;left:10px;color:#fbbf24;font:bold 16px sans-serif}
-#btn{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:#a855f7;color:#fff;border:0;padding:12px 30px;border-radius:20px;font:bold 16px sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#000;color:#fff;overflow:hidden;height:100vh}
+#app{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory}
+.video-container{height:100vh;scroll-snap-align:start;position:relative;background:#111;display:flex;align-items:center;justify-content:center}
+video{height:100%;width:100%;object-fit:cover}
+.overlay{position:absolute;bottom:70px;left:0;right:0;padding:15px;background:linear-gradient(transparent,rgba(0,0,0,.85));display:flex;justify-content:space-between}
+.right{display:flex;flex-direction:column;gap:18px}
+.icon-btn{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:24px;flex-direction:column}
+.header{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:center;gap:30px;padding:15px;font-weight:bold;background:linear-gradient(rgba(0,0,0,.6),transparent)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:12px 0;background:#000;border-top:1px solid #222}
 </style>
 </head>
 <body>
-<div id="box">
-<div id="score">SCORE: 0</div>
-<canvas id="c" width="360" height="640"></canvas>
-<button id="btn">PLAY TAKING V6</button>
+<div class="header"><span style="border-bottom:2px solid #fff">For You</span><span>Following</span></div>
+<div id="app">
+<div class="video-container">
+<video loop autoplay muted playsinline src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
+<div class="overlay"><div><h3>@taking_v6 🔥</h3><p>Swipe Up! #taking #viral</p></div><div class="right"><div class="icon-btn">❤️</div><div class="icon-btn">💬</div><div class="icon-btn">↗️</div></div></div>
 </div>
+<div class="video-container">
+<video loop playsinline src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"></video>
+<div class="overlay"><div><h3>@friend_tamil 😎</h3><p>Taking V6 Semma!</p></div><div class="right"><div class="icon-btn">❤️</div><div class="icon-btn">💬</div><div class="icon-btn">↗️</div></div></div>
+</div>
+</div>
+<div class="bottom-nav"><div>🏠Home</div><div>🔍Discover</div><div>+</div><div>💬Inbox</div><div>👤Profile</div></div>
 <script>
-const c=document.getElementById('c'),ctx=c.getContext('2d'),btn=document.getElementById('btn'),scoreE=document.getElementById('score');
-let p={x:165,y:560,w:30,h:30},bullets=[],ens=[],score=0,run=false,last=0;
-function drawP(){ctx.fillStyle='#a855f7';ctx.shadowBlur=15;ctx.shadowColor='#a855f7';ctx.fillRect(p.x,p.y,p.w,p.h);ctx.fillRect(p.x+10,p.y-10,10,10);ctx.shadowBlur=0;}
-function loop(t){
-if(!run)return;
-ctx.clearRect(0,0,360,640);
-drawP();
-if(t-last>120){bullets.push({x:p.x+13,y:p.y});last=t;}
-bullets.forEach((b,i)=>{b.y-=8;ctx.fillStyle='#fbbf24';ctx.fillRect(b.x,b.y,4,10);if(b.y<0)bullets.splice(i,1)});
-if(Math.random()<0.04)ens.push({x:Math.random()*330,y:-30,w:30,h:30});
-ens.forEach((e,i)=>{
-e.y+=2;ctx.fillStyle='#ef4444';ctx.fillRect(e.x,e.y,e.w,e.h);
-if(e.y>640)ens.splice(i,1);
-bullets.forEach((b,j)=>{if(b&&e&&b.x<e.x+e.w&&b.x+4>e.x&&b.y<e.y+e.h&&b.y+10>e.y){ens.splice(i,1);bullets.splice(j,1);score+=10;scoreE.innerText='SCORE: '+score;}})
-if(e.x<p.x+p.w&&e.x+e.w>p.x&&e.y<p.y+p.h&&e.y+e.h>p.y){run=false;btn.style.display='block';btn.innerText='GAME OVER - REPLAY';}
-});
-requestAnimationFrame(loop);
-}
-btn.onclick=()=>{score=0;ens=[];bullets=[];p.x=165;run=true;btn.style.display='none';scoreE.innerText='SCORE: 0';loop();};
-let sx=0; c.addEventListener('touchstart',e=>sx=e.touches[0].clientX);
-c.addEventListener('touchmove',e=>{let dx=e.touches[0].clientX-sx; p.x+=dx; p.x=Math.max(0,Math.min(330,p.x)); sx=e.touches[0].clientX; e.preventDefault();},{passive:false});
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{const v=e.target.querySelector('video');if(e.isIntersecting)v.play();else v.pause();})},{threshold:0.7});
+document.querySelectorAll('.video-container').forEach(c=>obs.observe(c));
 </script>
-</div>
 </body>
 </html>
