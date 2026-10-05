@@ -1,129 +1,32 @@
-<!DOCTYPE html>
-<html lang="ta">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TAKING V10</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-body{background:#000;color:#fff;font-family:system-ui}
-.post{background:#121212;border:1px solid #222;border-radius:18px;margin-bottom:14px;overflow:hidden}
-.scroll-hide::-webkit-scrollbar{display:none}
-.active-tab{background:#fff;color:#000!important}
-</style>
-</head>
-<body class="max-w-[520px] mx-auto pb-[80px]">
-
-<!-- HEADER -->
-<div class="flex justify-between items-center p-4 sticky top-0 bg-black/90 backdrop-blur z-20 border-b border-zinc-900">
-<h1 class="text-[24px] font-black tracking-widest">TAKING <span class="text-purple-500">V10</span></h1>
-<button onclick="document.getElementById('createModal').classList.remove('hidden')" class="bg-purple-600 px-4 py-1.5 rounded-full text-sm font-bold"><i class="fa-solid fa-plus mr-1"></i> Post Video</button>
-</div>
-
-<!-- FOLLOWING / FOR YOU TABS -->
-<div class="flex gap-2 p-3 sticky top-[64px] bg-black z-10">
-<button id="tabForYou" onclick="setTab('foryou')" class="flex-1 py-2.5 rounded-full font-bold text-sm border border-zinc-800 active-tab">For You</button>
-<button id="tabFollowing" onclick="setTab('following')" class="flex-1 py-2.5 rounded-full font-bold text-sm border border-zinc-800 text-zinc-400">Following <span id="followingCount" class="bg-zinc-800 px-2 py-0.5 rounded-full text-xs ml-1">0</span></button>
-</div>
-
-<!-- FEED -->
-<div id="feed" class="p-3"></div>
-
-<!-- CREATE POST MODAL -->
-<div id="createModal" class="hidden fixed inset-0 bg-black/90 z-50 p-4 flex items-center justify-center">
-<div class="bg-zinc-900 w-full max-w-[440px] rounded-[22px] p-5">
-<div class="flex justify-between items-center mb-4"><h2 class="font-bold text-lg">Video / Photo Post போடு தலைவா</h2><button onclick="this.closest('#createModal').classList.add('hidden')" class="w-8 h-8 bg-black rounded-full">✕</button></div>
-<input id="postUser" placeholder="உன் பேர் (ex: thala_ajith)" class="w-full bg-black border border-zinc-800 rounded-xl p-3 text-sm mb-3 outline-none">
-<input id="postCaption" placeholder="Caption எழுது..." class="w-full bg-black border border-zinc-800 rounded-xl p-3 text-sm mb-3 outline-none">
-<input id="postMedia" placeholder="Video/Image Link Paste பண்ணு (picsum.photos / mp4 link)" class="w-full bg-black border border-zinc-800 rounded-xl p-3 text-sm mb-3 outline-none">
-<p class="text-xs text-zinc-500 mb-3">Video வேணும்னா: https://www.w3schools.com/html/mov_bbb.mp4 மாதிரி link போடு</p>
-<button onclick="createPost()" class="w-full bg-white text-black py-3 rounded-full font-black">POST NOW</button>
-</div>
-</div>
-
-<!-- FOLLOWERS MODAL -->
-<div id="followModal" class="hidden fixed inset-0 bg-black/90 z-50 p-3">
-<div class="bg-zinc-900 rounded-[20px] p-4 max-w-[520px] mx-auto mt-10">
-<div class="flex justify-between items-center mb-4"><h2 class="font-bold">Following / Followers</h2><button onclick="document.getElementById('followModal').classList.add('hidden')" class="w-8 h-8 bg-black rounded-full">✕</button></div>
-<div id="followList"></div>
-</div>
-</div>
-
-<!-- BOTTOM NAV -->
-<div class="fixed bottom-0 w-full max-w-[520px] bg-black border-t border-zinc-900 flex justify-around py-3 text-xl z-20">
-<i class="fa-solid fa-house"></i>
-<i onclick="document.getElementById('followModal').classList.remove('hidden');renderFollows()" class="fa-solid fa-users text-zinc-500 cursor-pointer"></i>
-<i onclick="document.getElementById('createModal').classList.remove('hidden')" class="fa-regular fa-square-plus text-zinc-500 cursor-pointer"></i>
-<img src="https://i.pravatar.cc/100?img=1" class="w-6 h-6 rounded-full">
-</div>
-
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TAKING V2.9 + V10</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0f;color:#fff;font-family:Arial}.topBar{position:fixed;top:0;left:0;width:100%;height:56px;background:linear-gradient(90deg,#5e17eb,#7c4dff);display:flex;align-items:center;justify-content:space-between;padding:0 12px;z-index:50}.tabBar{position:fixed;top:56px;left:0;width:100%;height:48px;background:#0f0f1a;display:flex;gap:8px;padding:8px 12px;z-index:49;border-bottom:1px solid #1e1e2e}.tabBtn{flex:1;border-radius:20px;border:1px solid #2a2a3a;background:#1a1a2e;color:#888;font-weight:900;font-size:13px}.tabBtn.active{background:linear-gradient(90deg,#5e17eb,#7c4dff);color:#fff}.grid{margin-top:110px;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px;padding-bottom:80px}.thumb{position:relative;aspect-ratio:3/4;background:#1a1a2e;overflow:hidden}.thumb canvas{width:100%;height:100%}.label{position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,0.7);padding:2px 6px;border-radius:10px;font-size:10px}.emptyMsg{grid-column:1/-1;text-align:center;padding:40px;color:#888}#full{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:60;display:none}#mainVideoWrap{width:100%;height:100%;position:relative;display:flex;align-items:center;justify-content:center;background:#000}#fullVideo{width:100%;height:100%;object-fit:contain}.videoOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}.videoOverlay *{pointer-events:auto}.videoTop{position:absolute;top:0;left:0;width:100%;padding:12px;display:flex;justify-content:space-between;background:linear-gradient(180deg,rgba(0,0,0,0.6),transparent)}.videoRight{position:absolute;right:10px;bottom:90px;display:flex;flex-direction:column;gap:14px;align-items:center}.vBtn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}.followWrap{position:relative;width:44px;height:44px;cursor:pointer}.followPlus{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:20px;height:20px;background:#ff2d55;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff}.followPlus.following{background:#22c55e}.videoBottom{position:absolute;bottom:0;left:0;width:100%;padding:10px;background:linear-gradient(0deg,rgba(0,0,0,0.8),transparent)}.earnBar{height:3px;background:rgba(255,255,255,0.3);border-radius:2px;margin-bottom:6px;overflow:hidden}.earnProgress{height:100%;background:#5e17eb;width:0%}#completePage{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.96);display:none;align-items:center;justify-content:center;z-index:30;padding:20px}.completeCard{background:#1c1c2a;border-radius:24px;padding:24px 20px;width:100%;max-width:340px;text-align:center;border:1px solid #2a2a3a}.btnRow{display:flex;gap:12px}.btnNextNew{flex:1;background:#22c55e;color:#fff;padding:14px;border-radius:14px;border:none;font-weight:900}.btnCloseNew{flex:1;background:#3a3a4a;color:#fff;padding:14px;border-radius:14px;border:none;font-weight:800}.bottomBar{position:fixed;bottom:12px;left:0;width:100%;display:flex;justify-content:space-between;padding:0 12px;z-index:45}.bottomWallet{background:linear-gradient(90deg,#FFD700,#ffb700);color:#000;padding:12px 20px;border-radius:30px;font-weight:900;border:2px solid #fff}.addBtn{background:linear-gradient(90deg,#5e17eb,#7c4dff);color:#fff;padding:12px 28px;border-radius:30px;border:none;font-weight:900}.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:10px 20px;border-radius:20px;display:none;z-index:100}#popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:90;display:none;align-items:center;justify-content:center;padding:20px}#popbox{background:#1e1e2e;border-radius:16px;padding:20px;width:100%;max-width:320px}#popbox input{width:100%;background:#2a2a3a;border-radius:10px;padding:12px;color:#fff;margin-top:10px;border:1px solid #3a3a4a}#settingsBg{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:70;display:none}#settings{position:fixed;top:0;right:-100%;width:92%;max-width:400px;height:100%;background:#0f0f1a;z-index:80;overflow-y:auto;transition:right 0.3s ease}</style></head><body>
+<div class="topBar"><div style="display:flex;align-items:center;gap:8px"><div style="width:36px;height:36px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center">👤</div><div><div style="font-weight:900">Hussain</div><div style="font-size:10px">V2.9 + V10 MERGED</div></div></div><button onclick="document.getElementById('settings').style.right='0';document.getElementById('settingsBg').style.display='block'" style="width:42px;height:42px;border-radius:50%;background:#22c55e;border:2px solid #fff">☰</button></div>
+<div class="tabBar"><button id="tabForYou" class="tabBtn active" onclick="switchTab('foryou')">For You</button><button id="tabFollowing" class="tabBtn" onclick="switchTab('following')">Following (<span id="followCountTab">0</span>)</button></div>
+<div class="grid" id="grid"></div>
+<div class="bottomBar"><div class="bottomWallet">💰 <span id="wallet">₹0.00</span></div><button class="addBtn" onclick="pickVideo()">+ 📹 Video Add</button></div>
+<div id="full"><div id="mainVideoWrap"><video id="fullVideo" playsinline controls></video><div class="videoOverlay"><div class="videoTop"><div id="videoPos" style="background:rgba(0,0,0,0.5);padding:4px 10px;border-radius:15px;font-size:12px">1/0</div><span onclick="closeFull()" style="background:rgba(0,0,0,0.5);padding:6px 12px;border-radius:15px;cursor:pointer">✕</span></div><div class="videoRight"><div class="followWrap" onclick="toggleFollowCur()"><div style="width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:22px">👤</div><div class="followPlus" id="followPlus">+</div></div><div class="vBtn" onclick="likeCur()">❤️</div><div class="vBtn" onclick="shareAll()">↗️</div></div><div style="position:absolute;bottom:50px;right:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,0,0,0.8);display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="deleteCurVideo()">🗑️</div><div class="videoBottom"><div class="earnBar"><div id="earnProgress" class="earnProgress"></div></div><div id="fullSong2">🎵 Song</div></div></div><div id="completePage"><div class="completeCard"><div style="width:64px;height:64px;border-radius:16px;background:#22c55e;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px">✓</div><div style="font-size:18px;font-weight:900;color:#22c55e;margin-bottom:16px">Video முழுவதும் பார்த்ததற்கு நன்றி</div><div id="earnedAmtDesc">Rs.0.30 Earned!</div><div class="btnRow" style="margin-top:18px"><button class="btnNextNew" onclick="goNextFix()">Next</button><button class="btnCloseNew" onclick="goToHomeFix()">Close</button></div></div></div></div></div>
+<div id="settingsBg" onclick="closeSettings()"></div><div id="settings"><div style="height:56px;background:linear-gradient(90deg,#5e17eb,#7c4dff);display:flex;align-items:center;gap:12px;padding:0 16px"><span onclick="closeSettings()" style="font-size:22px;cursor:pointer">‹</span><b>Menu</b></div><div style="padding:14px"><div style="font-size:18px;font-weight:900">Total: ₹ <span id="walletBig">0.00</span></div><div id="uploadDetail">Upload: ₹0</div><div id="watchDetail">Watch: ₹0</div><div style="margin-top:10px">Following: <span id="statFollowing">0</span></div></div></div>
+<div id="popup"><div id="popbox"><h3>Song Name?</h3><input id="songName" placeholder="Enter song"><div style="display:flex;gap:10px;margin-top:8px"><button onclick="closePop()" style="flex:1;background:#444;color:#fff;padding:10px;border-radius:10px;border:none">Cancel</button><button onclick="saveVideo()" style="flex:1;background:#5e17eb;color:#fff;padding:10px;border-radius:10px;border:none">Save</button></div></div></div><div id="toast" class="toast"></div>
 <script>
-let allPosts = JSON.parse(localStorage.getItem('taking_posts') || 'null') || [
-{user:'arjun_official', avatar:'https://i.pravatar.cc/100?img=11', type:'video', media:'https://www.w3schools.com/html/mov_bbb.mp4', likes:512, caption:'என் புது Bike Video 🏍️ - Following பண்ணா தான் உனக்கு தெரியும்!'},
-{user:'priya_s', avatar:'https://i.pravatar.cc/100?img=32', type:'image', media:'https://picsum.photos/seed/taking11/600/800', likes:890, caption:'New Dance Video soon 💜'},
-{user:'kavin_editz', avatar:'https://i.pravatar.cc/100?img=15', type:'video', media:'https://www.w3schools.com/html/movie.mp4', likes:1203, caption:'Jeddah Beach Vlog 🔥'},
-{user:'thala_fan', avatar:'https://i.pravatar.cc/100?img=8', type:'image', media:'https://picsum.photos/seed/taking12/600/700', likes:234, caption:'TAKING V10 Full Working!'}
-];
-let following = JSON.parse(localStorage.getItem('taking_following') || '[]');
-let currentTab = 'foryou';
-
-function setTab(tab){
-currentTab=tab;
-document.getElementById('tabForYou').className = tab==='foryou'? 'flex-1 py-2.5 rounded-full font-bold text-sm border border-zinc-800 active-tab' : 'flex-1 py-2.5 rounded-full font-bold text-sm border border-zinc-800 text-zinc-400';
-document.getElementById('tabFollowing').className = tab==='following'? 'flex-1 py-2.5 rounded-full font-bold text-sm border border-zinc-800 active-tab' : 'flex-1 py-2.5 rounded-full font-bold text-sm border border-zinc-800 text-zinc-400';
-renderFeed();
-}
-
-function renderFeed(){
-let postsToShow = currentTab==='following'? allPosts.filter(p=> following.includes(p.user)) : allPosts;
-if(postsToShow.length===0 && currentTab==='following'){
-document.getElementById('feed').innerHTML = `<div class='text-center py-20 text-zinc-500'><i class='fa-solid fa-users-slash text-4xl mb-3'></i><p class='font-bold'>யாரையும் Follow பண்ணல தலைவா</p><p class='text-xs mt-1'>For You-ல போய் Follow பண்ணு, அப்ப தான் அவங்க Video இங்க தெரியும்</p></div>`;
-return;
-}
-document.getElementById('feed').innerHTML = postsToShow.map((p,idx)=>`
-<div class="post">
-<div class="flex items-center gap-3 p-3">
-<img src="${p.avatar}" class="w-9 h-9 rounded-full"><div class="flex-1"><p class="font-bold text-[14px]">${p.user}</p><p class="text-[11px] text-zinc-500">${p.type==='video'?'Video Post':'Photo Post'} • now</p></div>
-<button onclick="toggleFollow('${p.user}')" class="${following.includes(p.user)?'bg-zinc-800 text-white':'bg-white text-black'} px-4 py-1.5 rounded-full text-[13px] font-bold">${following.includes(p.user)?'Following':'Follow'}</button>
-</div>
-${p.type==='video'? `<video src="${p.media}" controls autoplay muted loop playsinline class="w-full max-h-[600px] bg-black"></video>` : `<img src="${p.media}" class="w-full">`}
-<div class="p-3">
-<div class="flex gap-4 text-[21px] mb-2"><i class="fa-regular fa-heart"></i><i class="fa-regular fa-comment"></i><i class="fa-regular fa-paper-plane"></i><i class="fa-regular fa-bookmark ml-auto"></i></div>
-<p class="font-bold text-[13px]">${p.likes} likes</p>
-<p class="text-[14px] mt-1"><span class="font-bold">${p.user}</span> ${p.caption}</p>
-</div>
-</div>`).join('');
-document.getElementById('followingCount').innerText = following.length;
-}
-
-function toggleFollow(name){
-if(following.includes(name)){ following = following.filter(n=>n!==name); }
-else{ following.push(name); }
-localStorage.setItem('taking_following', JSON.stringify(following));
-renderFeed();
-}
-
-function createPost(){
-let user = document.getElementById('postUser').value || 'you_'+Math.floor(Math.random()*100);
-let cap = document.getElementById('postCaption').value || 'My new video 🔥';
-let media = document.getElementById('postMedia').value || 'https://picsum.photos/seed/'+Date.now()+'/600/700';
-let isVideo = media.includes('.mp4') || media.includes('.mov') || media.includes('video');
-let newPost = {user, avatar:`https://i.pravatar.cc/100?img=${Math.floor(Math.random()*60)}`, type:isVideo?'video':'image', media, likes:0, caption:cap};
-allPosts.unshift(newPost);
-localStorage.setItem('taking_posts', JSON.stringify(allPosts));
-document.getElementById('createModal').classList.add('hidden');
-renderFeed();
-setTab('foryou');
-alert('Post போட்டாச்சு தலைவா! உன்ன Follow பண்றவங்களுக்கு Following Tab-ல தெரியும்!');
-}
-
-function renderFollows(){
-let list = document.getElementById('followList');
-if(following.length===0){ list.innerHTML = `<p class='text-zinc-500 text-center py-10 text-sm'>இன்னும் யாரையும் Follow பண்ணல</p>`; return; }
-list.innerHTML = following.map(n=>`<div class='flex items-center gap-3 bg-black p-3 rounded-xl border border-zinc-800 mb-2'><img src='https://i.pravatar.cc/100' class='w-10 h-10 rounded-full'><div class='flex-1'><p class='font-bold text-sm'>${n}</p><p class='text-xs text-zinc-500'>Following • அவன் Video உனக்கு தெரியும்</p></div><button onclick="toggleFollow('${n}');renderFollows()" class='bg-zinc-800 px-4 py-1 rounded-full text-sm'>Unfollow</button></div>`).join('');
-}
-
-renderFeed();
-</script>
-</body>
-</html>
+let db,tempBlob,tempFileName="",allVideos=[],filteredVideos=[],curIndex=0,curId,curData,earned=false,wallet=0;let watchedIds=new Set(),followedIds=new Set();let curBlobUrl="";let uploadEarnings=0,watchEarnings=0,uploadViews=0,watchViews=0;let currentTab='foryou';
+function showToast(m){let t=document.getElementById('toast');t.innerText=m;t.style.display='block';setTimeout(()=>t.style.display='none',3500);}
+let req=indexedDB.open("TAKING_BLOB_V1",3);req.onupgradeneeded=e=>{let d=e.target.result;if(!d.objectStoreNames.contains("videos"))d.createObjectStore("videos",{keyPath:"id"});};req.onsuccess=e=>{db=e.target.result;loadAll();loadWallet();};
+function loadWallet(){let wData=localStorage.getItem('taking_wallet_v2');if(wData){try{let j=JSON.parse(wData);uploadEarnings=j.uploadEarn||0;watchEarnings=j.watchEarn||0;uploadViews=j.uploadViews||0;watchViews=j.watchViews||0;wallet=uploadEarnings+watchEarnings;}catch(e){}}watchedIds=new Set(JSON.parse(localStorage.getItem('taking_watched')||'[]'));followedIds=new Set(JSON.parse(localStorage.getItem('taking_followed')||'[]'));updateWalletUI();}
+function saveWallet(){wallet=uploadEarnings+watchEarnings;localStorage.setItem('taking_wallet_v2',JSON.stringify({uploadEarn:uploadEarnings,watchEarn:watchEarnings,uploadViews:uploadViews,watchViews:watchViews}));localStorage.setItem('taking_watched',JSON.stringify([...watchedIds]));}
+function saveFollowed(){localStorage.setItem('taking_followed',JSON.stringify([...followedIds]));}
+function updateWalletUI(){document.getElementById('wallet').innerText='₹'+wallet.toFixed(2);document.getElementById('walletBig').innerText=wallet.toFixed(2);document.getElementById('statFollowing').innerText=followedIds.size;document.getElementById('followCountTab').innerText=followedIds.size;let plus=document.getElementById('followPlus');if(plus&&curId){if(followedIds.has(curId)){plus.innerText='✓';plus.className='followPlus following';}else{plus.innerText='+';plus.className='followPlus';}}}
+function closeSettings(){document.getElementById("settings").style.right="-100%";document.getElementById("settingsBg").style.display="none";}
+function closePop(){document.getElementById('popup').style.display='none';}
+function pickVideo(){let i=document.createElement('input');i.type='file';i.accept='video/*';i.onchange=e=>{tempBlob=e.target.files[0];tempFileName=tempBlob.name;document.getElementById('songName').value="";document.getElementById('popup').style.display='flex';};i.click();}
+function saveVideo(){if(!tempBlob)return;let s=document.getElementById('songName').value.trim()||"Nice";db.transaction("videos","readwrite").objectStore("videos").add({id:Date.now(),name:tempFileName,song:s,blob:tempBlob}).onsuccess=()=>{closePop();loadAll();showToast('Video Added');};}
+function switchTab(tab){currentTab=tab;document.getElementById('tabForYou').className=tab=='foryou'?'tabBtn active':'tabBtn';document.getElementById('tabFollowing').className=tab=='following'?'tabBtn active':'tabBtn';loadAll();}
+function loadAll(){db.transaction("videos","readonly").objectStore("videos").getAll().onsuccess=e=>{allVideos=e.target.result.sort((a,b)=>b.id-a.id);filteredVideos=currentTab==='following'?allVideos.filter(v=>followedIds.has(v.id)):allVideos;let g=document.getElementById('grid');g.innerHTML="";if(filteredVideos.length===0){g.innerHTML=currentTab==='following'?'<div class="emptyMsg">😕 No Following videos<br>For You la poi Follow pannu!</div>':'<div class="emptyMsg">📹 Video illa<br>+ Video Add pannu</div>';}filteredVideos.forEach(v=>{let u=URL.createObjectURL(v.blob);let d=document.createElement('div');d.className='thumb';d.onclick=()=>openFull(v.id);d.innerHTML='<canvas id="c_'+v.id+'" width="300" height="400"></canvas><div class="label">🎵 '+v.song+'</div>';g.appendChild(d);let c=document.getElementById('c_'+v.id);let x=c.getContext('2d');let vid=document.createElement('video');vid.src=u;vid.muted=true;vid.addEventListener('loadeddata',()=>{vid.currentTime=0.2;});vid.addEventListener('seeked',()=>{try{x.drawImage(vid,0,0,300,400);}catch(e){}});});updateWalletUI();};}
+function openFull(id){let idx=filteredVideos.findIndex(x=>x.id===id);showFullAt(idx);}
+function showFullAt(idx){if(filteredVideos.length==0)return;if(idx<0)idx=filteredVideos.length-1;if(idx>=filteredVideos.length)idx=0;curIndex=idx;curData=filteredVideos[idx];curId=curData.id;earned=false;document.getElementById('completePage').style.display='none';let fv=document.getElementById('fullVideo');if(curBlobUrl)URL.revokeObjectURL(curBlobUrl);curBlobUrl=URL.createObjectURL(curData.blob);fv.src=curBlobUrl;fv.currentTime=0;document.getElementById('videoPos').innerText=(idx+1)+'/'+filteredVideos.length;document.getElementById('fullSong2').innerText='🎵 '+curData.song;document.getElementById('full').style.display='block';updateWalletUI();fv.oncanplay=()=>fv.play();setupEarnLogic();}
+function toggleFollowCur(){if(!curId)return;if(followedIds.has(curId)){followedIds.delete(curId);showToast('Unfollowed');}else{followedIds.add(curId);showToast('Following ✓');}saveFollowed();updateWalletUI();if(currentTab==='following'&&!followedIds.has(curId)){setTimeout(()=>{closeFull();loadAll();},400);}}
+function setupEarnLogic(){let fv=document.getElementById('fullVideo');fv.ontimeupdate=()=>{if(!fv.duration)return;document.getElementById('earnProgress').style.width=(fv.currentTime/fv.duration)*100+'%';};fv.onended=()=>{if(earned)return;earned=true;if(!watchedIds.has(curId)){watchViews++;watchEarnings+=0.10;uploadViews++;uploadEarnings+=0.20;watchedIds.add(curId);saveWallet();updateWalletUI();document.getElementById('earnedAmtDesc').innerText='Rs.0.30 Earned! Total ₹'+wallet.toFixed(2);}document.getElementById('completePage').style.display='flex';};}
+function goNextFix(){document.getElementById('completePage').style.display='none';setTimeout(()=>showFullAt(curIndex+1),50);}
+function goToHomeFix(){document.getElementById('completePage').style.display='none';closeFull();}
+function closeFull(){document.getElementById('fullVideo').pause();document.getElementById('full').style.display='none';document.getElementById('completePage').style.display='none';}
+function deleteCurVideo(){if(!curId)return;if(!confirm('Delete?'))return;db.transaction("videos","readwrite").objectStore("videos").delete(curId).onsuccess=()=>{showToast('Deleted');closeFull();loadAll();};}
+function likeCur(){showToast('Liked ❤️');}function shareAll(){window.open("https://wa.me/?text=TAKING","_blank");}
+</script></body></html>
